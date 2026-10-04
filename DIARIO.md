@@ -69,7 +69,6 @@ Registro das sessões de desenvolvimento: o que foi feito, decisões, aprendizad
   Causa: o OpenSSL do Ubuntu 26.04 envia, no TLS 1.3, uma saudação maior (com métodos pós-quânticos), e o servidor do Senado trava. Solução: limitar a TLS 1.2 com um `ssl.SSLContext` passado ao httpx.
 
 **Dúvidas em aberto:**
-- O que significa o sufixo "(Substitutivo-CD)" na identificação, e o gabinete precisa distinguir esses casos?
 - A API não ordena por número; definir a ordenação no Radaris.
 
 **Próximo passo:** montar a tabela de correspondência de campos Senado × Câmara e a lista de tipos de proposição que um gabinete monitora (base do Módulo 2: modelagem).
