@@ -72,3 +72,43 @@ Registro das sessões de desenvolvimento: o que foi feito, decisões, aprendizad
 - A API não ordena por número; definir a ordenação no Radaris.
 
 **Próximo passo:** montar a tabela de correspondência de campos Senado × Câmara e a lista de tipos de proposição que um gabinete monitora (base do Módulo 2: modelagem).
+
+---
+
+## 2026-10-09 — Módulo 2: campos, tipos, histórias de usuário e modelo de dados
+
+**Feito:**
+- Documento de referência "Radaris — Campos e tipos: Senado × Câmara" (campos das duas APIs, equivalência de tipos, siglas ativas do Senado, modelo de dados).
+- Scripts `exportar_tipos.py` (tipos de proposição das duas Casas em CSV) e `camara_campos.py` (campos da API da Câmara, com recursão para campos aninhados), este rodado na máquina do trabalho.
+- Quatro histórias de usuário: projeto próprio, matéria de interesse (mensagem presidencial), relatoria e pauta semanal.
+- Modelo de dados consolidado, com diagrama ER, tabelas por fase (MVP, v1.1, v2), regras de alerta e regras do coletor.
+
+**Decisões:**
+- Coletar todos os tipos e filtrar na exibição. 25 siglas monitoradas por padrão (DEN, DLG, INQ, INS, MCN, MPV, MSF, MSG, OFS, PDL, PDN, PEC, PL, PLP, PLV, PLN, PRS, QCN, QED, QSF, REQ, RQN, RQS, SUG, VET), editáveis pelo usuário.
+- Duas camadas de dados: públicos (APIs, iguais para todos) e do gabinete (privados, isolados por gabinete).
+- MVP: alertas, agenda/pautas, anotações com anexo. v1.1: emendas, versões do texto, prazos, boletim da pauta. v2: orientações, tarefas, pedidos à Consultoria, posicionamento.
+- Incluídos no modelo: norma gerada, tema/classificação e monitoramento de emendas por projeto.
+- Próxima etapa com SQLite e SQLAlchemy; PostgreSQL só quando o modelo estabilizar.
+
+**Aprendi:**
+- Parâmetro de consulta (o que se envia para filtrar) ≠ campo de resposta (o que volta). Ex.: `tramitacaoSenado` na Câmara é filtro, não campo.
+- "Example Value" do Swagger ≠ "Response body": o exemplo é modelo da documentação; só a execução mostra o dado real.
+- Aviso do editor (Pylance) ≠ erro de execução.
+- A API omite campos sem valor: ler com `.get()`.
+- Normalização: o que se repete (eventos, autores, temas, vínculos) vai para tabelas separadas.
+- Modelo da fonte (como o Senado autua) ≠ modelo do produto (como o gabinete enxerga).
+
+**Problemas / pegadinhas da API do Senado:**
+- O detalhe do processo repete informes e apensados várias vezes (duplicatas pelo mesmo `id`).
+- Vínculos assimétricos: o RQS 396/2026 (urgência) não aponta para o PL 1.126/2021, mas o PL aponta para o RQS. Os vínculos também são incompletos.
+- `dataUltimaAtualizacao` muda sem mudança relevante (PL 21/2020: situação de 2024, atualização em 2026).
+- Divergência entre Casas: PL 21/2020 prejudicado no Senado e `tramitando: Sim` na Câmara.
+- A matéria muda de identidade: MSF 42/2026 virou PRS 36/2026 no dia seguinte à leitura.
+- Achados úteis: o substitutivo traz `idProcessoCasaInicial` (vínculo com o original); a mensagem traz o número de origem (MSG 699/2026 da Presidência); o tipo do requerimento é estruturado (`URGENCIA_MATERIA`).
+
+**Dúvidas em aberto (Módulo 3):**
+- Confirmar no serviço novo (`/processo/{id}`) os vínculos vistos no serviço antigo.
+- Endpoint da agenda/pauta das comissões.
+- Como a API da Câmara liga emendas ao projeto principal.
+
+**Próximo passo:** Módulo 4 — instalar o SQLAlchemy e criar as tabelas `sigla`, `proposicao` e `evento_tramitacao` em SQLite, gravando os PLs de 2026 coletados.
