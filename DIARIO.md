@@ -112,3 +112,36 @@ Registro das sessões de desenvolvimento: o que foi feito, decisões, aprendizad
 - Como a API da Câmara liga emendas ao projeto principal.
 
 **Próximo passo:** Módulo 4 — instalar o SQLAlchemy e criar as tabelas `sigla`, `proposicao` e `evento_tramitacao` em SQLite, gravando os PLs de 2026 coletados.
+
+---
+
+## 2026-10-09 (noite) — Módulo 4, sessão 1: banco de dados e primeiro coletor
+
+**Feito:**
+- SQLAlchemy 2.1 instalado; banco SQLite (`radaris.db`) criado.
+- `src/radaris/db.py` (conexão, sessão e classe `Base`) e `src/radaris/modelos.py` (tabelas `sigla`, `proposicao`, `evento_tramitacao`).
+- `criar_banco.py`: cria as tabelas.
+- `coletar_pls.py`: busca os PLs de 2026 no Senado e grava no banco com upsert → 502 PLs, 42 vindos da Câmara.
+- Teste de idempotência: 1ª execução = 502 novas; 2ª = 0 novas e 502 atualizadas.
+- Extensão SQLite Viewer instalada para visualizar o banco.
+
+**Decisões:**
+- Código do sistema em `src/radaris/`; scripts executáveis na raiz.
+- `radaris.db` fora do Git (`*.db` no `.gitignore`).
+- Duplicatas barradas pelo próprio banco (`UniqueConstraint`), não só pelo código.
+- O banco só é alterado pelo código; a extensão serve para visualizar.
+
+**Aprendi:**
+- Tabela, chave primária, chave estrangeira, restrição de unicidade.
+- ORM: classe = tabela, objeto = linha; `Mapped[str | None]` = campo opcional; `relationship` permite navegar (`proposicao.eventos`).
+- Sessão e `commit`: nada é gravado até o commit.
+- Upsert (buscar → atualizar ou criar) e idempotência (rodar de novo não duplica).
+- Expressão regular para separar sigla, número e ano da identificação.
+- `(radaris)` no terminal = ambiente virtual ativo; `radaris (3.12.x)` na barra do VS Code = interpretador do projeto.
+- Aba Ports: porta interna do VS Code, só em localhost.
+- `git add` prepara; sem `git commit`, o `git push` não envia nada.
+
+**Dúvidas em aberto:**
+- Tamanho da carga inicial (todas as matérias em tramitação, `tramitando=S`) e se a API limita o tamanho da resposta.
+
+**Próximo passo:** medir a carga inicial; preencher `evento_tramitacao` a partir do detalhe de cada proposição; primeira detecção de mudança (embrião do motor de alertas).
