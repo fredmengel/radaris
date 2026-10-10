@@ -50,7 +50,7 @@ class EventoTramitacao(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     proposicao_id: Mapped[int] = mapped_column(ForeignKey("proposicao.id"))
-    id_origem: Mapped[int | None]
+    id_origem: Mapped[int]
     data: Mapped[datetime]
     colegiado: Mapped[str | None] = mapped_column(String(20))
     situacao: Mapped[str | None] = mapped_column(String(200))
